@@ -1,0 +1,16 @@
+@import './responsive-web.css';
+@import './fonts.css';
+@import './theme.css';
+@import './tailwind.css';
+@import './index.css';
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
