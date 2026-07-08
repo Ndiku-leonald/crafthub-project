@@ -2,53 +2,53 @@
 
 :root {
   --font-size: 16px;
-  --font-heading: 'Poppins', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Nunito Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* MamaSkills Brand Colors (updated to match logo) */
   --navy: #003366;
-  --gold: #B48C00;
+  --gold: #AD7E00;
   --green: #1F5C2E;
-  --off-white: #F7F3EA; /* warm cream to match logo background */
-  --charcoal: #1A1A2E;
-  --card-bg: #EEF4FB;
-  --success: #D5F0D5;
-  --warning: #FFF8EE;
+  --terracotta: #A94722;
+  --off-white: #F6F8F5;
+  --charcoal: #17231A;
+  --card-bg: #FFFFFF;
+  --success: #E3F6E8;
+  --warning: #FFF4DB;
 
-  --background: #F7F3EA;
-  --foreground: #132416;
+  --background: #F6F8F5;
+  --foreground: #17231A;
   --card: #FFFFFF;
-  --card-foreground: #132416;
+  --card-foreground: #17231A;
   --popover: #ffffff;
-  --popover-foreground: #132416;
-  --primary: #1F5C2E; /* deep green from logo */
+  --popover-foreground: #17231A;
+  --primary: #1F5C2E;
   --primary-foreground: #ffffff;
-  --secondary: #B85A23; /* warm terracotta/orange to match accents */
+  --secondary: #AD7E00;
   --secondary-foreground: #ffffff;
-  --muted: #E7E2D6;
-  --muted-foreground: #6B7280;
+  --muted: #E8EFE7;
+  --muted-foreground: #526356;
   --accent: #1F5C2E;
   --accent-foreground: #ffffff;
   --destructive: #DC2626;
   --destructive-foreground: #ffffff;
-  --border: #E5E7EB;
+  --border: #DCE4DA;
   --input: transparent;
   --input-background: #ffffff;
   --switch-background: #D1D5DB;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #003366;
-  --chart-1: #B48C00;
+  --ring: #1F5C2E;
+  --chart-1: #AD7E00;
   --chart-2: #1F5C2E;
   --chart-3: #003366;
   --chart-4: #EEF4FB;
   --chart-5: #D5F0D5;
   --radius: 0.75rem;
-  --sidebar: #003366;
+  --sidebar: #0F2C1A;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #B48C00;
-  --sidebar-primary-foreground: #1A1A2E;
-  --sidebar-accent: #1F5C2E;
+  --sidebar-primary: #F3C74D;
+  --sidebar-primary-foreground: #132416;
+  --sidebar-accent: #2B7540;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #004080;
   --sidebar-ring: #B48C00;
@@ -140,6 +140,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
 
   /**
@@ -156,6 +158,7 @@
     font-weight: 700;
     line-height: 1.3;
     font-family: var(--font-heading);
+    text-wrap: balance;
   }
 
   h2 {
@@ -163,6 +166,7 @@
     font-weight: 700;
     line-height: 1.3;
     font-family: var(--font-heading);
+    text-wrap: balance;
   }
 
   h3 {
@@ -170,6 +174,7 @@
     font-weight: 700;
     line-height: 1.3;
     font-family: var(--font-heading);
+    text-wrap: balance;
   }
 
   h4 {
@@ -195,5 +200,182 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+@layer components {
+  .app-page {
+    @apply mx-auto w-full max-w-screen-2xl space-y-6;
+  }
+
+  .app-card {
+    @apply rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(15,44,26,0.05)];
+  }
+
+  .app-panel {
+    @apply rounded-2xl border border-border bg-card;
+  }
+
+  .app-page-title {
+    @apply text-2xl font-extrabold leading-tight tracking-normal text-foreground md:text-3xl;
+  }
+
+  .app-page-copy {
+    @apply mt-1 max-w-2xl text-sm leading-6 text-muted-foreground;
+  }
+
+  .app-section-title {
+    @apply text-base font-bold text-foreground;
+  }
+
+  .app-label {
+    @apply text-xs font-semibold text-muted-foreground;
+  }
+
+  .app-primary-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-[#174823] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .app-secondary-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-bold text-foreground transition hover:border-[#BFCDBA] hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .app-input {
+    @apply rounded-xl border border-border bg-white px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-[#6E7B70] focus:border-primary focus:ring-2 focus:ring-primary/15;
+  }
+
+  .app-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1 text-xs font-bold text-muted-foreground transition;
+  }
+
+  .craft-scene {
+    position: relative;
+    min-height: 480px;
+    perspective: 1200px;
+    transform-style: preserve-3d;
+  }
+
+  .craft-disc {
+    position: absolute;
+    border-radius: 999px;
+    animation: craft-float 8s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .craft-disc-one {
+    inset: 8% 10% auto auto;
+    width: min(28vw, 340px);
+    aspect-ratio: 1;
+    background: #355CFF;
+    box-shadow: 0 24px 60px rgb(53 92 255 / 0.22);
+  }
+
+  .craft-disc-two {
+    left: 10%;
+    bottom: 12%;
+    width: min(22vw, 260px);
+    aspect-ratio: 1;
+    background: #FFCF5A;
+    animation-delay: -2.5s;
+  }
+
+  .craft-card-3d {
+    position: absolute;
+    display: flex;
+    min-width: 210px;
+    flex-direction: column;
+    gap: 0.35rem;
+    border: 1px solid rgb(22 37 31 / 0.12);
+    border-radius: 18px;
+    background: rgb(255 255 255 / 0.92);
+    padding: 1.25rem;
+    color: #16251F;
+    box-shadow: 0 18px 42px rgb(22 37 31 / 0.12);
+    transform-style: preserve-3d;
+    animation: craft-tilt 9s cubic-bezier(.22,1,.36,1) infinite;
+    will-change: transform;
+  }
+
+  .craft-card-3d span {
+    color: #516057;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  .craft-card-3d strong {
+    font-size: 1.55rem;
+    line-height: 1;
+  }
+
+  .craft-card-front {
+    right: 7%;
+    top: 30%;
+  }
+
+  .craft-card-back {
+    left: 12%;
+    top: 16%;
+    animation-delay: -3s;
+  }
+
+  .craft-orbit {
+    position: absolute;
+    left: 24%;
+    top: 30%;
+    width: min(34vw, 420px);
+    aspect-ratio: 1;
+    border: 1px solid rgb(22 37 31 / 0.15);
+    border-radius: 999px;
+    transform: rotateX(68deg) rotateZ(-14deg);
+    animation: craft-spin 18s linear infinite;
+  }
+
+  .craft-orbit span {
+    position: absolute;
+    width: 18px;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: #1F6D4A;
+  }
+
+  .craft-orbit span:nth-child(1) { left: 50%; top: -9px; }
+  .craft-orbit span:nth-child(2) { right: 8%; bottom: 12%; background: #355CFF; }
+  .craft-orbit span:nth-child(3) { left: 5%; bottom: 26%; background: #FFCF5A; }
+}
+
+@keyframes craft-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -18px, 44px) rotate(2deg); }
+}
+
+@keyframes craft-tilt {
+  0%, 100% { transform: rotateY(-18deg) rotateX(8deg) translate3d(0, 0, 70px); }
+  50% { transform: rotateY(-6deg) rotateX(2deg) translate3d(0, -16px, 92px); }
+}
+
+@keyframes craft-spin {
+  to { transform: rotateX(68deg) rotateZ(346deg); }
+}
+
+@media (max-width: 860px) {
+  .craft-scene {
+    min-height: 300px;
+  }
+
+  .craft-card-3d {
+    min-width: 150px;
+    padding: 1rem;
+  }
+
+  .craft-card-3d strong {
+    font-size: 1.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craft-disc,
+  .craft-card-3d,
+  .craft-orbit {
+    animation: none;
   }
 }

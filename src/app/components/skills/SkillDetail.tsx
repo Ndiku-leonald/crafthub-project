@@ -20,10 +20,11 @@ import { useUser } from '../../context/UserContext';
 import { useCertificate } from '../../context/CertificateContext';
 import { SKILLS_DATABASE } from '../../utils/skillsDatabase';
 import CertificateModal from '../certificates/CertificateModal';
+import { EmptyState, GlyphTile } from '../ui/product-ui';
 import type { Certificate, Badge } from '../../context/CertificateContext';
 
-const NAVY = '#003366';
-const GOLD = '#B48C00';
+const NAVY = '#0F2C1A';
+const GOLD = '#AD7E00';
 const GREEN = '#1F5C2E';
 
 function getBadgeLevelForSkill(skillId: number): Badge['level'] {
@@ -86,17 +87,15 @@ export default function SkillDetail() {
 
   if (!skill) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-center">
-        <div className="text-5xl mb-4">🔍</div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Skill not found</h2>
-        <button
-          onClick={() => navigate('/learn')}
-          className="mt-4 px-5 py-2.5 rounded-lg text-sm font-semibold text-white"
-          style={{ backgroundColor: NAVY }}
-        >
-          Back to Skills Library
-        </button>
-      </div>
+      <EmptyState
+        title="Skill not found"
+        description="This lesson is not available right now. Return to the skills library to keep learning."
+        action={
+          <button onClick={() => navigate('/learn')} className="app-primary-btn">
+            Back to Skills Library
+          </button>
+        }
+      />
     );
   }
 
@@ -298,7 +297,7 @@ export default function SkillDetail() {
                       </p>
                       <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
                         <Clock size={11} /> {lesson.duration}
-                        <span className="mx-1">·</span>
+                        <span className="mx-1">/</span>
                         <span className="capitalize">{lesson.type}</span>
                       </p>
                     </div>
@@ -324,7 +323,7 @@ export default function SkillDetail() {
               className="rounded-2xl p-6 text-center border-2"
               style={{ borderColor: GREEN, backgroundColor: '#F0FDF4' }}
             >
-              <div className="text-4xl mb-3">🎉</div>
+              <Award size={28} className="mx-auto mb-3" style={{ color: GREEN }} />
               <h3 className="font-bold text-slate-900 mb-1">You've completed all lessons!</h3>
               <p className="text-sm text-slate-500 mb-4">
                 Claim your certificate and badge to prove your expertise.

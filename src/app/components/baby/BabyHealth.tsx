@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, Play, Calendar, MapPin, CheckCircle, Circle, Heart, Baby } from 'lucide-react';
+import { AlertTriangle, Baby, Calendar, CheckCircle, Circle, Droplets, Heart, MapPin, Milk, Play, Salad } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 
 const NAVY = '#003366';
@@ -7,17 +7,17 @@ const GOLD = '#B48C00';
 const GREEN = '#1F5C2E';
 
 const dangerSigns = [
-  { id: 1, sign: 'highFever',           icon: '🌡️' },
-  { id: 2, sign: 'difficultyBreathing', icon: '😮' },
-  { id: 3, sign: 'refusingToFeed',      icon: '🍼' },
-  { id: 4, sign: 'convulsionsSeizures', icon: '⚠️' },
-  { id: 5, sign: 'sunkenFontanelle',    icon: '👶' },
+  { id: 1, sign: 'highFever', icon: AlertTriangle },
+  { id: 2, sign: 'difficultyBreathing', icon: Heart },
+  { id: 3, sign: 'refusingToFeed', icon: Milk },
+  { id: 4, sign: 'convulsionsSeizures', icon: AlertTriangle },
+  { id: 5, sign: 'sunkenFontanelle', icon: Baby },
 ];
 
 const nutritionItems = [
-  { emoji: '🍼', key: 'breastMilkOnly' },
-  { emoji: '💧', key: 'cleanWater'     },
-  { emoji: '🥗', key: 'solidFoodsAt6Months' },
+  { icon: Milk, key: 'breastMilkOnly' },
+  { icon: Droplets, key: 'cleanWater' },
+  { icon: Salad, key: 'solidFoodsAt6Months' },
 ];
 
 export default function BabyHealth() {
@@ -100,17 +100,22 @@ export default function BabyHealth() {
             <div className="flex items-center gap-3 px-6 py-4 bg-red-50 border-b border-red-100">
               <AlertTriangle size={18} className="text-red-600 flex-shrink-0" />
               <div>
-                <h2 className="font-semibold text-red-700 text-sm">Danger Signs — Go to Clinic Immediately</h2>
+                <h2 className="font-semibold text-red-700 text-sm">Danger Signs: Go to Clinic Immediately</h2>
                 <p className="text-xs text-red-500 mt-0.5">{t('goClinicIf')}</p>
               </div>
             </div>
             <div className="divide-y divide-red-50">
-              {dangerSigns.map((item) => (
-                <div key={item.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-red-50/40 transition-colors">
-                  <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                  <span className="text-sm font-medium text-slate-700">{t(item.sign)}</span>
-                </div>
-              ))}
+              {dangerSigns.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-red-50/40 transition-colors">
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                      <Icon size={18} />
+                    </span>
+                    <span className="text-sm font-medium text-slate-700">{t(item.sign)}</span>
+                  </div>
+                );
+              })}
             </div>
             <div className="px-6 py-4 bg-red-50">
               <button
@@ -129,9 +134,9 @@ export default function BabyHealth() {
             style={{ background: `linear-gradient(135deg, #FFF8EE 0%, #FFFBF0 100%)`, border: `2px solid ${GOLD}30` }}
           >
             <div className="flex items-start gap-5">
-              <div className="text-5xl flex-shrink-0">👶🏾</div>
+              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-white text-primary"><Baby size={28} /></div>
               <div className="flex-1">
-                <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: GOLD }}>
+                <p className="app-label mb-1" style={{ color: GOLD }}>
                   Weekly Health Tip
                 </p>
                 <h3 className="font-bold text-slate-900 mb-2">{t('fourMonthMilestoneCheck')}</h3>
@@ -154,16 +159,21 @@ export default function BabyHealth() {
               <p className="text-xs text-slate-500 mt-0.5">For babies {babyAge} months old</p>
             </div>
             <div className="p-5 grid sm:grid-cols-3 gap-3">
-              {nutritionItems.map((item) => (
-                <div
-                  key={item.key}
-                  className="text-center p-4 rounded-xl border border-slate-100"
-                  style={{ backgroundColor: '#F8FAFC' }}
-                >
-                  <div className="text-3xl mb-2">{item.emoji}</div>
-                  <p className="text-xs font-medium text-slate-600 leading-snug">{t(item.key)}</p>
-                </div>
-              ))}
+              {nutritionItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.key}
+                    className="text-center p-4 rounded-xl border border-slate-100"
+                    style={{ backgroundColor: '#F8FAFC' }}
+                  >
+                    <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                      <Icon size={19} />
+                    </div>
+                    <p className="text-xs font-medium text-slate-600 leading-snug">{t(item.key)}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

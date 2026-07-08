@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Search, BookOpen, Layers, ChevronRight, Star, Clock, DollarSign, Zap } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 import { SKILLS_DATABASE, SKILL_CATEGORIES } from '../../utils/skillsDatabase';
+import { GlyphTile, PageHeader } from '../ui/product-ui';
 
 const NAVY = '#003366';
 const GOLD = '#B48C00';
@@ -75,17 +76,12 @@ export default function SkillsLibrary() {
   const featured = SKILLS_DATABASE[0];
 
   return (
-    <div className="space-y-6 max-w-screen-2xl">
+    <div className="app-page">
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            {t('whatToLearn') || 'Skills Library'}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Discover vocational skills to learn, earn income, and build your future.
-          </p>
-        </div>
+      <PageHeader
+        title={t('whatToLearn') || 'Skills Library'}
+        description="Discover vocational skills to learn, earn income, and build your future."
+        actions={
         <div className="flex items-center gap-3 flex-shrink-0">
           <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-sm">
             <BookOpen size={14} style={{ color: NAVY }} />
@@ -100,7 +96,8 @@ export default function SkillsLibrary() {
             </span>
           </div>
         </div>
-      </div>
+        }
+      />
 
       {/* Search bar */}
       <div className="relative">
@@ -113,7 +110,7 @@ export default function SkillsLibrary() {
           placeholder={t('searchSkills') || 'Search skills by name, category, or description...'}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition-all shadow-sm"
+          className="app-input w-full py-3 pl-12 pr-4"
         />
         {searchQuery && (
           <button
@@ -133,7 +130,7 @@ export default function SkillsLibrary() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className="px-4 py-1.5 rounded-full text-sm font-medium transition-all border"
+              className="app-chip px-4 py-1.5 text-sm"
               style={
                 active
                   ? { backgroundColor: NAVY, color: '#fff', borderColor: NAVY }
@@ -154,7 +151,7 @@ export default function SkillsLibrary() {
       {/* Featured skill banner */}
       {!searchQuery && selectedCategory === 'All' && (
         <div
-          className="rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+          className="app-card cursor-pointer overflow-hidden transition hover:border-[#BFCDBA]"
           onClick={() => navigate(`/skill/${featured.id}`)}
           role="button"
           tabIndex={0}
@@ -162,13 +159,12 @@ export default function SkillsLibrary() {
         >
           <div
             className="relative flex flex-col md:flex-row items-stretch"
-            style={{ background: `linear-gradient(135deg, ${GOLD} 0%, #D4A017 60%, #E8B730 100%)` }}
+            style={{ background: `linear-gradient(135deg, #FFF4DB 0%, #F7E3A5 100%)` }}
           >
             <div className="flex-1 p-6 lg:p-8">
               <div className="flex items-center gap-2 mb-3">
                 <span
-                  className="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
-                  style={{ backgroundColor: 'rgba(0,0,0,0.15)', color: '#fff' }}
+                  className="rounded-full bg-[#0F2C1A] px-2.5 py-1 text-xs font-bold text-white"
                 >
                   Featured Skill
                 </span>
@@ -224,10 +220,10 @@ export default function SkillsLibrary() {
             </div>
 
             <div
-              className="hidden md:flex items-center justify-center w-56 text-9xl flex-shrink-0"
-              style={{ backgroundColor: 'rgba(0,0,0,0.08)' }}
+              className="hidden w-56 flex-shrink-0 items-center justify-center md:flex"
+              style={{ backgroundColor: 'rgba(15,44,26,0.08)' }}
             >
-              {featured.emoji}
+              <GlyphTile category={featured.category} size="lg" />
             </div>
           </div>
         </div>
@@ -257,8 +253,10 @@ export default function SkillsLibrary() {
 
       {/* Skills grid or empty state */}
       {filteredSkills.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-16 text-center">
-          <div className="text-5xl mb-4">🔍</div>
+        <div className="app-card p-10 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-primary">
+            <Search size={22} />
+          </div>
           <h3 className="font-semibold text-slate-900 mb-2">No skills found</h3>
           <p className="text-sm text-slate-500 mb-5">
             Try adjusting your search or selecting a different category.
@@ -282,19 +280,14 @@ export default function SkillsLibrary() {
             return (
               <div
                 key={skill.id}
-                className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
+                className="app-card cursor-pointer overflow-hidden transition hover:border-[#BFCDBA] group"
                 onClick={() => navigate(`/skill/${skill.id}`)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && navigate(`/skill/${skill.id}`)}
               >
                 <div className="px-5 pt-5 pb-3 flex items-start justify-between">
-                  <div
-                    className="h-14 w-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 border border-slate-100"
-                    style={{ backgroundColor: cat.bg }}
-                  >
-                    {skill.emoji}
-                  </div>
+                  <GlyphTile category={skill.category} />
                   <div className="flex flex-col items-end gap-1.5">
                     <span
                       className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
@@ -361,7 +354,7 @@ export default function SkillsLibrary() {
                   </div>
 
                   <button
-                    className="w-full py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    className="app-primary-btn w-full"
                     style={{ backgroundColor: NAVY }}
                     onClick={(e) => {
                       e.stopPropagation();

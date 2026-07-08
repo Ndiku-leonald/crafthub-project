@@ -4,6 +4,7 @@ import { ChevronDown, Plus, Minus } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 import { useUser } from '../../context/UserContext';
 import { validateFirstName, validatePhone } from '../../utils/validationUtils';
+import { OnboardingPage } from './OnboardingChrome';
 
 const districts = [
   'Kampala', 'Mukono', 'Wakiso', 'Jinja', 'Mbale', 'Gulu', 'Mbarara', 'Masaka'
@@ -48,21 +49,22 @@ export default function ProfileSetup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12" style={{ backgroundColor: 'var(--off-white)' }}>
-      <div className="w-full max-w-2xl">
+    <OnboardingPage centered>
+      <div className="w-full max-w-2xl rounded-2xl border border-[#DDE4DD] bg-white p-5 shadow-[0_18px_40px_rgb(22_37_31_/_0.08)] sm:p-7">
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: 'var(--secondary)' }} />
-            <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: 'var(--border)' }} />
+          <div className="mb-4 flex items-center gap-2">
+            <div className="h-2 flex-1 rounded-full bg-[#355CFF]" />
+            <div className="h-2 flex-1 rounded-full bg-[#DDE4DD]" />
           </div>
-          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{t('stepLabel').replace('{step}', '1').replace('{total}', '2')}</p>
+          <p className="text-sm font-bold text-[#6A766D]">{t('stepLabel').replace('{step}', '1').replace('{total}', '2')}</p>
         </div>
 
-        <h1 className="mb-8 text-3xl md:text-4xl" style={{ color: 'var(--primary)' }}>
+        <h1 className="text-3xl font-extrabold text-[#16251F] md:text-4xl">
           {t('quickProfileSetup')}
         </h1>
+        <p className="mt-3 max-w-xl text-sm leading-6 text-[#516057]">{t('profileSetupIntro')}</p>
 
-        <div className="space-y-6 max-w-lg">
+        <div className="mt-8 space-y-5">
           <div>
             <label className="block mb-2 font-medium" style={{ color: 'var(--charcoal)' }}>
               {t('firstName')} *
@@ -72,7 +74,7 @@ export default function ProfileSetup() {
               value={formData.firstName}
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               placeholder={t('enterYourName')}
-              className="w-full px-4 py-3 rounded-xl border-2 outline-none focus:border-[var(--primary)]"
+              className="app-input w-full"
               style={{
                 backgroundColor: 'white',
                 borderColor: errors.firstName ? '#DC2626' : 'var(--border)'
@@ -91,7 +93,7 @@ export default function ProfileSetup() {
               <select
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border-2 outline-none appearance-none focus:border-[var(--primary)]"
+                className="app-input w-full appearance-none"
                 style={{
                   backgroundColor: 'white',
                   borderColor: errors.district ? '#DC2626' : 'var(--border)'
@@ -121,21 +123,19 @@ export default function ProfileSetup() {
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, children: Math.max(0, formData.children - 1) })}
-                className="p-3 rounded-full hover:opacity-80 transition-all"
-                style={{ backgroundColor: 'var(--card-bg)' }}
+                className="rounded-full bg-[#EEF2FF] p-3 text-[#355CFF] transition hover:bg-[#E1E8FF]"
               >
-                <Minus size={20} style={{ color: 'var(--primary)' }} />
+                <Minus size={20} />
               </button>
-              <div className="flex-1 text-center py-3 rounded-xl" style={{ backgroundColor: 'white', border: '2px solid var(--border)' }}>
-                <span className="text-2xl font-semibold" style={{ color: 'var(--primary)' }}>{formData.children}</span>
+              <div className="flex-1 rounded-xl border border-[#DDE4DD] bg-[#F7F8F6] py-3 text-center">
+                <span className="text-2xl font-extrabold text-[#16251F]">{formData.children}</span>
               </div>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, children: formData.children + 1 })}
-                className="p-3 rounded-full hover:opacity-80 transition-all"
-                style={{ backgroundColor: 'var(--card-bg)' }}
+                className="rounded-full bg-[#EEF2FF] p-3 text-[#355CFF] transition hover:bg-[#E1E8FF]"
               >
-                <Plus size={20} style={{ color: 'var(--primary)' }} />
+                <Plus size={20} />
               </button>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function ProfileSetup() {
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+256 700 000 000"
-              className="w-full px-4 py-3 rounded-xl border-2 outline-none focus:border-[var(--primary)]"
+              className="app-input w-full"
               style={{
                 backgroundColor: 'white',
                 borderColor: errors.phone ? '#DC2626' : 'var(--border)'
@@ -167,13 +167,12 @@ export default function ProfileSetup() {
           <button
             type="button"
             onClick={handleContinue}
-            className="w-full py-4 rounded-xl transition-all hover:opacity-90 font-medium text-lg"
-            style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary)' }}
+            className="w-full rounded-full bg-[#355CFF] py-4 text-base font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-[#2848D9]"
           >
             {t('continue')}
           </button>
         </div>
       </div>
-    </div>
+    </OnboardingPage>
   );
 }

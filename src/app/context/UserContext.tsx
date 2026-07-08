@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-type UserType = 'caregiver' | 'buyer' | null;
+type UserType = 'caregiver' | 'mother' | 'buyer' | null;
 
 export interface UserProfile {
   firstName: string;

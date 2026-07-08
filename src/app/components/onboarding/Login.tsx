@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Phone } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 import { useAuth } from '../../context/AuthContext';
-import { validatePhone, validatePassword, ValidationError } from '../../utils/validationUtils';
+import { validatePassword, validatePhone } from '../../utils/validationUtils';
+import { CraftMotionScene, OnboardingPage } from './OnboardingChrome';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,12 +17,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = (event: React.FormEvent) => {
+    event.preventDefault();
     setErrors({});
     setServerError('');
 
-    // Validate phone number
     const phoneError = validatePhone(phone);
     const passwordError = validatePassword(password);
 
@@ -34,132 +34,95 @@ export default function Login() {
     }
 
     setLoading(true);
-    // Simulate network delay
-    setTimeout(() => {
+    window.setTimeout(() => {
       if (login(phone, password)) {
         navigate('/dashboard');
       } else {
-        setServerError('Invalid phone number or password');
+        setServerError(t('invalidLogin'));
       }
       setLoading(false);
-    }, 500);
+    }, 450);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12" style={{ backgroundColor: 'var(--primary)' }}>
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="mb-6 flex items-center justify-center w-20 h-20 rounded-full mx-auto" style={{ backgroundColor: 'var(--secondary)' }}>
-          <img src="/CraftHub_Logo.jpeg" alt="logo" className="w-16 h-16 object-contain rounded-full" />
-          </div>
-          <h1 className="text-3xl mb-2" style={{ color: 'white' }}>
-            {t('welcome')}
-          </h1>
-          <p style={{ color: 'var(--secondary)' }}>
-            {t('signInToAccount')}
-          </p>
+    <OnboardingPage centered>
+      <section className="grid w-full gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+        <div className="hidden lg:block">
+          <CraftMotionScene />
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-5">
-          {/* Email */}
-          {/* Phone */}
-          <div>
-            <label className="block mb-2 text-sm font-medium" style={{ color: 'white' }}>
-              {t('phoneNumber')} *
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder={t('enterPhone') || '+256 700 000 000'}
-              className="w-full px-4 py-3 rounded-lg border-2 outline-none focus:border-[var(--secondary)]"
-              style={{
-                backgroundColor: 'white',
-                borderColor: errors.phone ? '#DC2626' : 'transparent'
-              }}
-            />
-            {errors.phone && (
-              <p className="mt-1 text-sm" style={{ color: '#FCA5A5' }}>
-                {errors.phone}
-              </p>
-            )}
+        <div className="mx-auto w-full max-w-md rounded-2xl border border-[#DDE4DD] bg-white p-5 shadow-[0_18px_40px_rgb(22_37_31_/_0.08)] sm:p-7">
+          <div className="mb-7">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EEF2FF] text-[#355CFF]">
+              <Lock size={22} />
+            </div>
+            <h1 className="text-3xl font-extrabold text-[#16251F]">{t('welcome')}</h1>
+            <p className="mt-2 text-sm leading-6 text-[#516057]">{t('signInToAccount')}</p>
           </div>
 
-          {/* Password */}
-          <div>
-            <label className="block mb-2 text-sm font-medium" style={{ color: 'white' }}>
-              {t('password') || 'Password'}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <label className="block">
+              <span className="mb-2 block text-sm font-extrabold text-[#26352D]">{t('phoneNumber')}</span>
+              <span className="relative block">
+                <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6A766D]" />
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  placeholder={t('enterPhone')}
+                  className="app-input w-full pl-10"
+                />
+              </span>
+              {errors.phone && <span className="mt-1 block text-sm font-semibold text-red-600">{errors.phone}</span>}
             </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg border-2 outline-none focus:border-[var(--secondary)]"
-                style={{
-                  backgroundColor: 'white',
-                  borderColor: errors.password ? '#DC2626' : 'transparent'
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2"
-              >
-                {showPassword ? (
-                  <EyeOff size={20} style={{ color: 'var(--muted-foreground)' }} />
-                ) : (
-                  <Eye size={20} style={{ color: 'var(--muted-foreground)' }} />
-                )}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="mt-1 text-sm" style={{ color: '#FCA5A5' }}>
-                {errors.password}
-              </p>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-extrabold text-[#26352D]">{t('password')}</span>
+              <span className="relative block">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6A766D]" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Enter password"
+                  className="app-input w-full pl-10 pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-[#6A766D] transition hover:bg-[#F0F3F0]"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </span>
+              {errors.password && <span className="mt-1 block text-sm font-semibold text-red-600">{errors.password}</span>}
+            </label>
+
+            {serverError && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                {serverError}
+              </div>
             )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#355CFF] px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-[#2848D9] disabled:translate-y-0 disabled:opacity-60"
+            >
+              {loading ? t('signingIn') : t('signIn')}
+              <ArrowRight size={17} />
+            </button>
+          </form>
+
+          <div className="mt-6 rounded-2xl bg-[#F7F8F6] p-4 text-center text-sm font-semibold text-[#516057]">
+            {t('noAccount')}{' '}
+            <button onClick={() => navigate('/language')} className="font-extrabold text-[#355CFF] hover:underline">
+              {t('signUp')}
+            </button>
           </div>
-
-          {/* Server Error */}
-          {serverError && (
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(220, 38, 38, 0.1)', color: '#FCA5A5' }}>
-              <p className="text-sm">{serverError}</p>
-            </div>
-          )}
-
-          {/* Login Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-lg font-medium transition-all hover:opacity-90 disabled:opacity-50"
-            style={{ backgroundColor: 'var(--secondary)', color: 'var(--primary)' }}
-          >
-            {loading ? (t('signingIn') || 'Signing in...') : (t('signIn') || 'Sign In')}
-          </button>
-        </form>
-
-        {/* Divider */}
-        <div className="my-8 flex items-center gap-3">
-          <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
-          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>OR</span>
-          <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
         </div>
-
-        {/* Sign Up Link */}
-        <p className="text-center" style={{ color: 'white' }}>
-          {t('noAccount') || "Don't have an account?"}{' '}
-          <button
-            onClick={() => navigate('/')}
-            className="font-semibold hover:opacity-80"
-            style={{ color: 'var(--secondary)' }}
-          >
-            {t('signUp') || 'Sign Up'}
-          </button>
-        </p>
-      </div>
-    </div>
+      </section>
+    </OnboardingPage>
   );
 }

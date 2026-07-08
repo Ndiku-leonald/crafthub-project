@@ -28,24 +28,24 @@ import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
 
 const LANGUAGES = [
-  { code: 'en'  as const, label: '🇬🇧 English'    },
-  { code: 'lg'  as const, label: '🇺🇬 Luganda'    },
-  { code: 'rk'  as const, label: '🇺🇬 Runyankore' },
-  { code: 'ac'  as const, label: '🇺🇬 Acholi'     },
-  { code: 'teo' as const, label: '🇺🇬 Ateso'      },
-  { code: 'lgg' as const, label: '🇺🇬 Lugbara'    },
-  { code: 'cgg' as const, label: '🇺🇬 Rukiga'     },
-  { code: 'sw'  as const, label: '🇹🇿 Swahili'    },
-  { code: 'ny'  as const, label: '🇺🇬 Nyoro'      },
-  { code: 'nd'  as const, label: '🇿🇦 Ndebele'    },
+  { code: 'en'  as const, label: 'English'    },
+  { code: 'lg'  as const, label: 'Luganda'    },
+  { code: 'rk'  as const, label: 'Runyankore' },
+  { code: 'ac'  as const, label: 'Acholi'     },
+  { code: 'teo' as const, label: 'Ateso'      },
+  { code: 'lgg' as const, label: 'Lugbara'    },
+  { code: 'cgg' as const, label: 'Rukiga'     },
+  { code: 'sw'  as const, label: 'Swahili'    },
+  { code: 'ny'  as const, label: 'Nyoro'      },
+  { code: 'nd'  as const, label: 'Ndebele'    },
 ];
 
 const LANG_SHORT: Record<string, string> = {
   en: 'EN', lg: 'LG', rk: 'RK', ac: 'AC', teo: 'TEO', lgg: 'LGG', cgg: 'CGG', sw: 'SW', ny: 'NY', nd: 'ND',
 };
 
-const NAVY = '#003366';
-const GOLD = '#B48C00';
+const NAVY = '#0F2C1A';
+const GOLD = '#F3C74D';
 
 const mainNavItems = [
   { title: 'Dashboard', path: '/dashboard', icon: Home },
@@ -87,7 +87,7 @@ function Sidebar({ open, onClose, userName, locale }: SidebarProps) {
     location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const navItemClass = (path: string) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 w-full text-left ${
+    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-150 w-full text-left ${
       isActive(path)
         ? 'text-[#003366]'
         : 'text-slate-300 hover:text-white hover:bg-white/10'
@@ -106,14 +106,14 @@ function Sidebar({ open, onClose, userName, locale }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-60 flex flex-col transition-transform duration-300 ease-in-out
+        className={`fixed top-0 left-0 z-50 flex h-[100dvh] w-64 flex-col transition-transform duration-300 ease-out
           ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
         style={{ backgroundColor: NAVY }}
       >
         <div className="flex items-center justify-between px-4 py-5 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div
-              className="h-9 w-9 rounded-lg flex items-center justify-center text-base font-bold flex-shrink-0 shadow-sm"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-base font-extrabold"
               style={{ backgroundColor: GOLD, color: NAVY }}
             >
               C
@@ -137,7 +137,7 @@ function Sidebar({ open, onClose, userName, locale }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
           <div>
             <p
-              className="text-xs font-semibold uppercase tracking-widest px-3 mb-2"
+              className="mb-2 px-3 text-xs font-bold text-white/55"
               style={{ color: GOLD }}
             >
               Main Menu
@@ -164,7 +164,7 @@ function Sidebar({ open, onClose, userName, locale }: SidebarProps) {
 
           <div>
             <p
-              className="text-xs font-semibold uppercase tracking-widest px-3 mb-2"
+              className="mb-2 px-3 text-xs font-bold text-white/55"
               style={{ color: GOLD }}
             >
               Insights
@@ -250,7 +250,7 @@ function Header({ onMenuClick, userName, search, onSearchChange }: HeaderProps) 
   };
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center px-4 lg:px-6 gap-4 flex-shrink-0 z-30 shadow-sm">
+    <header className="z-30 flex h-16 flex-shrink-0 items-center gap-4 border-b border-border bg-white/95 px-4 shadow-[0_1px_2px_rgba(15,44,26,0.04)] lg:px-6">
       <button
         onClick={onMenuClick}
         className="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
@@ -288,8 +288,8 @@ function Header({ onMenuClick, userName, search, onSearchChange }: HeaderProps) 
           <input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search..."
-            className="pl-9 pr-4 py-2 text-sm bg-slate-100 border border-slate-200 rounded-lg outline-none focus:border-slate-300 focus:bg-white transition-colors w-48 lg:w-64"
+            placeholder="Search skills, orders, products"
+            className="app-input w-48 py-2 pl-9 pr-4 lg:w-72"
           />
         </div>
 
@@ -316,8 +316,8 @@ function Header({ onMenuClick, userName, search, onSearchChange }: HeaderProps) 
             <ChevronDown size={12} className={`text-slate-400 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
           </button>
           {langOpen && (
-            <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-50 max-h-64 overflow-y-auto">
-              <p className="px-3 py-1 text-xs font-semibold text-slate-400 uppercase tracking-wider">Language</p>
+            <div className="absolute right-0 top-full z-50 mt-1.5 max-h-64 w-48 overflow-y-auto rounded-xl border border-border bg-white py-1.5 shadow-lg">
+              <p className="px-3 py-1 text-xs font-bold text-muted-foreground">Language</p>
               {LANGUAGES.map((lang) => (
                 <button
                   key={lang.code}
@@ -398,7 +398,7 @@ export default function AppShell() {
   const userName = userProfile?.firstName || 'User';
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex min-h-[100dvh] overflow-hidden bg-background">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -406,14 +406,14 @@ export default function AppShell() {
         locale={locale}
       />
 
-      <div className="flex flex-col flex-1 overflow-hidden lg:ml-60">
+      <div className="flex flex-1 flex-col overflow-hidden lg:ml-64">
         <Header
           onMenuClick={() => setSidebarOpen(true)}
           userName={userName}
           search={search}
           onSearchChange={setSearch}
         />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>
