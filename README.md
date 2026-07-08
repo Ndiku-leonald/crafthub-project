@@ -1,11 +1,20 @@
-CraftHub - Connecting Creativity with Opportunity
+ # Build app from prompt
+
+  This is a code bundle for Build app from prompt. The original project is available at https://www.figma.com/design/EADGhrGA6wrdV9CtnNfZbF/Build-app-from-prompt.
+
+  ## Running the code
+
+  Run `npm i` to install the dependencies.
+
+  Run `npm run dev` to start the development server.
+  🎨 CraftHub - Connecting Creativity with Opportunity
  Project Overview
 
 CraftHub is a digital platform designed to connect talented young creators, artisans, and customers through an easy-to-use online marketplace. The platform provides a space where users can showcase their skills, discover handmade products, and create opportunities for economic empowerment.
 
 The project aims to bridge the gap between creative talents and potential customers by providing a digital solution that promotes visibility, collaboration, and entrepreneurship.
 
-Problem Statement
+ Problem Statement
 
 Many talented individuals, especially young creators and skilled artisans, struggle to find reliable platforms where they can showcase and sell their products or services.
 
@@ -39,7 +48,7 @@ Inquiry and feedback system
  Dashboard
 Manage personal activities
 Track uploaded products and interactions
-Technologies Used
+ Technologies Used
 Frontend
 HTML5
 CSS3
@@ -69,13 +78,4 @@ CraftHub/
 ├── assets/
 │
 └── README.md
-  # Build app from prompt
-
-  This is a code bundle for Build app from prompt. The original project is available at https://www.figma.com/design/EADGhrGA6wrdV9CtnNfZbF/Build-app-from-prompt.
-
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
   
