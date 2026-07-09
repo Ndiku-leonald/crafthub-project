@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import {
   Activity,
   ArrowRight,
+  Award,
   BarChart3,
   BookOpen,
   ChevronRight,
@@ -18,24 +19,24 @@ import {
 } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 import { useUser } from '../../context/UserContext';
+import { useCertificate } from '../../context/CertificateContext';
+import { SKILLS_DATABASE } from '../../utils/skillsDatabase';
+import { getAllLearningProgress } from '../../utils/learningContent';
 import { GlyphTile } from '../ui/product-ui';
 
 const NAVY = '#0F2C1A';
 const GOLD = '#AD7E00';
 const GREEN = '#1F5C2E';
 
-const learningSkills = [
-  { name: 'Bread Baking', category: 'Baking', progress: 75, categoryKey: 'baking', nextLesson: 'Advanced Techniques' },
-  { name: 'Basket Weaving', category: 'Weaving', progress: 45, categoryKey: 'weaving', nextLesson: 'Traditional Patterns' },
-  { name: 'Soap Making', category: 'Soap', progress: 30, categoryKey: 'soap', nextLesson: 'Natural Ingredients' },
-  { name: 'Machine Tailoring', category: 'Tailoring', progress: 60, categoryKey: 'tailoring', nextLesson: 'Dress Patterns' },
-];
-
 export default function Dashboard() {
   const navigate = useNavigate();
   const { t } = useLocale();
   const { userProfile } = useUser();
+  const { certificates, badges } = useCertificate();
   const userName = userProfile?.firstName || 'Friend';
+  const learningSkills = getAllLearningProgress(SKILLS_DATABASE);
+  const completedLessons = learningSkills.reduce((sum, item) => sum + item.completed, 0);
+  const hasProgress = learningSkills.length > 0 || certificates.length > 0;
 
   const greeting = (() => {
     const h = new Date().getHours();
@@ -45,18 +46,17 @@ export default function Dashboard() {
   })();
 
   const kpiCards = [
-    { label: t('activeSkillsLabel'), value: '8', icon: BookOpen, trend: t('trendActiveSkills'), trendUp: true, iconBg: '#EEF4FB', iconColor: NAVY },
-    { label: t('monthlyRevenue'), value: '45,200', suffix: ' UGX', icon: TrendingUp, trend: t('trendRevenue'), trendUp: true, iconBg: '#FFF4DB', iconColor: GOLD },
-    { label: t('ordersLabel'), value: '12', icon: Package, trend: t('trendOrders'), trendUp: true, iconBg: '#E3F6E8', iconColor: GREEN },
-    { label: t('ratingLabel'), value: '4.8', icon: Star, trend: t('trendRating'), trendUp: true, iconBg: '#F5EBE5', iconColor: '#A94722' },
+    { label: t('activeSkillsLabel'), value: String(learningSkills.length), icon: BookOpen, trend: hasProgress ? `${completedLessons} lessons passed` : 'Start your first course', trendUp: true, iconBg: '#EEF4FB', iconColor: NAVY },
+    { label: 'Certificates', value: String(certificates.length), icon: Award, trend: certificates.length > 0 ? `${badges.length} badges earned` : 'None yet', trendUp: true, iconBg: '#FFF4DB', iconColor: GOLD },
+    { label: t('ordersLabel'), value: '0', icon: Package, trend: 'No orders yet', trendUp: true, iconBg: '#E3F6E8', iconColor: GREEN },
+    { label: t('ratingLabel'), value: '-', icon: Star, trend: 'No reviews yet', trendUp: true, iconBg: '#F5EBE5', iconColor: '#A94722' },
   ];
 
-  const recentActivity = [
-    { category: 'Learning', text: t('trendOrders') !== '+3 new orders' ? `${t('lessonsDone')}: Bread Baking Basics` : 'Completed lesson "Bread Baking Basics"', time: '2h ago' },
-    { category: 'Product', text: 'New order: Vanilla Cake, 15,000 UGX', time: '5h ago' },
-    { category: 'Certificate', text: 'Received 5-star review from Mary K.', time: t('previous') },
-    { category: 'Crafts', text: 'Product listed: Handwoven Basket', time: '2d ago' },
-  ];
+  const recentActivity = certificates.slice(-4).reverse().map((cert) => ({
+    category: 'Certificate',
+    text: `Earned certificate in ${cert.skillName}`,
+    time: cert.completionDate,
+  }));
 
   const communityStats = [
     { label: t('activeSellers'), value: '127' },
@@ -84,9 +84,9 @@ export default function Dashboard() {
           </div>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { value: '127', label: t('sellers') },
-              { value: '342', label: t('productsLabel') },
-              { value: '89%', label: t('satisfaction') },
+              { value: String(certificates.length), label: 'Certificates' },
+              { value: String(badges.length), label: 'Badges' },
+              { value: `${completedLessons}`, label: 'Lessons' },
             ].map((stat) => (
               <div key={stat.label} className="rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-center">
                 <p className="text-xl font-extrabold text-white">{stat.value}</p>
@@ -134,23 +134,36 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="divide-y divide-border/70">
-              {learningSkills.map((skill) => (
-                <div key={skill.name} className="flex items-center gap-4 px-6 py-4 transition hover:bg-muted/35">
+              {learningSkills.length === 0 ? (
+                <div className="px-6 py-10 text-center">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-primary">
+                    <BookOpen size={22} />
+                  </div>
+                  <p className="font-bold text-foreground">No learning progress yet</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                    Start from scratch with any Craft Hub skill. Your lessons, quizzes, badges, and certificates will appear here.
+                  </p>
+                  <button onClick={() => navigate('/learn')} className="app-primary-btn mt-5">
+                    Start a Skill
+                  </button>
+                </div>
+              ) : learningSkills.map(({ skill, percent, completed, total }) => (
+                <div key={skill.id} className="flex items-center gap-4 px-6 py-4 transition hover:bg-muted/35">
                   <GlyphTile category={skill.category} size="sm" />
                   <div className="min-w-0 flex-1">
                     <div className="mb-1.5 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-bold text-foreground">{skill.name}</p>
-                        <span className="hidden rounded-md bg-muted px-1.5 py-0.5 text-xs font-bold text-muted-foreground sm:inline">{t(skill.categoryKey)}</span>
+                        <span className="hidden rounded-md bg-muted px-1.5 py-0.5 text-xs font-bold text-muted-foreground sm:inline">{skill.category}</span>
                       </div>
-                      <span className="text-xs font-extrabold text-foreground">{skill.progress}%</span>
+                      <span className="text-xs font-extrabold text-foreground">{percent}%</span>
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${skill.progress}%`, backgroundColor: skill.progress >= 70 ? GREEN : skill.progress >= 40 ? GOLD : NAVY }} />
+                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${percent}%`, backgroundColor: percent >= 70 ? GREEN : percent >= 40 ? GOLD : NAVY }} />
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{t('nextLessonLabel')} {skill.nextLesson}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{completed} of {total} sessions passed</p>
                   </div>
-                  <button onClick={() => navigate('/learn')} className="app-secondary-btn hidden px-3 py-1.5 text-xs sm:inline-flex">
+                  <button onClick={() => navigate(`/skill/${skill.id}`)} className="app-secondary-btn hidden px-3 py-1.5 text-xs sm:inline-flex">
                     {t('continueBtn')}
                   </button>
                 </div>
@@ -167,7 +180,11 @@ export default function Dashboard() {
               <Activity size={16} className="text-muted-foreground" />
             </div>
             <div className="divide-y divide-border/70">
-              {recentActivity.map((item) => (
+              {recentActivity.length === 0 ? (
+                <div className="px-6 py-8 text-center text-sm text-muted-foreground">
+                  No activity yet. Complete a lesson or certificate and it will show here.
+                </div>
+              ) : recentActivity.map((item) => (
                 <div key={`${item.text}-${item.time}`} className="flex items-center gap-3 px-6 py-3.5 transition hover:bg-muted/35">
                   <GlyphTile category={item.category} size="sm" />
                   <div className="min-w-0 flex-1">

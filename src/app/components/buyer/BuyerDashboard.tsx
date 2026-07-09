@@ -1,4 +1,4 @@
-import { Bell, MapPin, Search, Star, Store, TrendingUp, Users } from 'lucide-react';
+import { Award, Bell, MapPin, Search, Star, Store, TrendingUp, Users } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useLocale } from '../../context/LocaleContext';
 import { GlyphTile, PageHeader, StatCard, UserRound } from '../ui/product-ui';
@@ -19,9 +19,9 @@ const categories = [
 ];
 
 const topSellers = [
-  { id: 1, name: 'Grace', location: 'Mukono', products: 8, sales: 45 },
-  { id: 2, name: 'Sarah', location: 'Kampala', products: 12, sales: 67 },
-  { id: 3, name: 'Mary', location: 'Wakiso', products: 6, sales: 38 },
+  { id: 1, name: 'Grace', location: 'Mukono', products: 8, sales: 45, certificates: ['Bread Baking', 'Cake Decoration'] },
+  { id: 2, name: 'Sarah', location: 'Kampala', products: 12, sales: 67, certificates: ['Basket Weaving', 'Weaving'] },
+  { id: 3, name: 'Mary', location: 'Wakiso', products: 6, sales: 38, certificates: ['Soap Making'] },
 ];
 
 export default function BuyerDashboard() {
@@ -110,6 +110,17 @@ export default function BuyerDashboard() {
                 <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
                   <span>{seller.products} {t('products')}</span>
                   <span>{seller.sales} {t('sales')}</span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {seller.certificates.map((certificate) => (
+                    <span
+                      key={certificate}
+                      className="inline-flex items-center gap-1 rounded-full bg-[#FFF4DB] px-2 py-1 text-xs font-bold text-[#7A5A00]"
+                    >
+                      <Award size={11} />
+                      {certificate}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}

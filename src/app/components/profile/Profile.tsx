@@ -21,6 +21,8 @@ import { useLocale } from '../../context/LocaleContext';
 import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCertificate } from '../../context/CertificateContext';
+import { SKILLS_DATABASE } from '../../utils/skillsDatabase';
+import { getAllLearningProgress } from '../../utils/learningContent';
 import CertificateModal from '../certificates/CertificateModal';
 import type { Certificate, Badge } from '../../context/CertificateContext';
 
@@ -63,6 +65,8 @@ export default function Profile() {
 
   const userName  = userProfile?.firstName || 'User';
   const district  = userProfile?.district  || 'Uganda';
+  const learningProgress = getAllLearningProgress(SKILLS_DATABASE);
+  const completedLessons = learningProgress.reduce((sum, item) => sum + item.completed, 0);
 
   const handleSignOut = () => { logout(); navigate('/'); };
 
@@ -114,9 +118,9 @@ export default function Profile() {
             <h3 className="font-semibold text-slate-900 mb-4">{t('yourProgress')}</h3>
             <div className="space-y-4">
               {[
-                { icon: DollarSign,  label: t('totalEarned'), value: '45,000 UGX', color: GOLD,  bg: '#FFFBEB' },
-                { icon: BookOpen,    label: t('lessonsDone'), value: `${certificates.length * 8 + 9} Lessons`, color: NAVY, bg: '#EEF2FF' },
-                { icon: ShoppingBag, label: t('totalOrders'), value: '12 Orders',  color: GREEN, bg: '#ECFDF5' },
+                { icon: DollarSign,  label: t('totalEarned'), value: '0 UGX', color: GOLD,  bg: '#FFFBEB' },
+                { icon: BookOpen,    label: t('lessonsDone'), value: `${completedLessons} Lessons`, color: NAVY, bg: '#EEF2FF' },
+                { icon: ShoppingBag, label: t('totalOrders'), value: '0 Orders',  color: GREEN, bg: '#ECFDF5' },
                 { icon: Award,       label: 'Certificates',  value: `${certificates.length} Earned`, color: GOLD, bg: '#FFFBEB' },
               ].map((stat) => {
                 const Icon = stat.icon;

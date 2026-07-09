@@ -8,6 +8,7 @@ import {
   CheckCircle,
   Circle,
   Award,
+  ExternalLink,
   Play,
   FileText,
   Wrench,
@@ -19,6 +20,12 @@ import {
 import { useUser } from '../../context/UserContext';
 import { useCertificate } from '../../context/CertificateContext';
 import { SKILLS_DATABASE } from '../../utils/skillsDatabase';
+import {
+  PASSING_SCORE,
+  generateCourseLessons,
+  readLessonProgress,
+  writeLessonProgress,
+} from '../../utils/learningContent';
 import CertificateModal from '../certificates/CertificateModal';
 import { EmptyState, GlyphTile } from '../ui/product-ui';
 import type { Certificate, Badge } from '../../context/CertificateContext';
@@ -39,32 +46,6 @@ function getDifficultyStyle(d: string) {
   return { bg: '#FEF2F2', text: '#991B1B', dot: '#EF4444' };
 }
 
-function generateLessons(skill: { id: number; name: string; lessons: number; hasVideo: boolean; hasPDF: boolean }) {
-  const titles = [
-    'Introduction & Overview',
-    'Tools & Materials Setup',
-    'Basic Techniques',
-    'Hands-on Practice',
-    'Intermediate Methods',
-    'Quality Standards',
-    'Business Basics',
-    'Pricing Your Products',
-    'Finding Customers',
-    'Marketing Tips',
-    'Scaling Your Business',
-    'Advanced Techniques',
-    'Troubleshooting',
-    'Final Project',
-    'Assessment',
-  ];
-  return Array.from({ length: skill.lessons }, (_, i) => ({
-    id: i + 1,
-    title: titles[i % titles.length] ?? `Lesson ${i + 1}`,
-    type: i % 3 === 0 && skill.hasVideo ? 'video' : skill.hasPDF ? 'pdf' : 'text',
-    duration: `${Math.floor(10 + (i * 7) % 30)} min`,
-  }));
-}
-
 export default function SkillDetail() {
   const { skillId } = useParams();
   const navigate = useNavigate();
@@ -72,16 +53,13 @@ export default function SkillDetail() {
   const { awardCertificate, hasCertificate, certificates, badges } = useCertificate();
 
   const skill = SKILLS_DATABASE.find((s) => s.id === Number(skillId));
-  const lessons = useMemo(() => (skill ? generateLessons(skill) : []), [skill]);
+  const lessons = useMemo(() => (skill ? generateCourseLessons(skill) : []), [skill]);
 
-  const [completedLessons, setCompletedLessons] = useState<Set<number>>(() => {
-    try {
-      const stored = localStorage.getItem(`skill_progress_${skillId}`);
-      return stored ? new Set(JSON.parse(stored)) : new Set();
-    } catch {
-      return new Set();
-    }
-  });
+  const [completedLessons, setCompletedLessons] = useState<Set<number>>(() => new Set(readLessonProgress(skillId ?? '').completedLessonIds));
+  const [quizScores, setQuizScores] = useState<Record<number, number>>(() => readLessonProgress(skillId ?? '').quizScores);
+  const [activeLessonId, setActiveLessonId] = useState(1);
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [quizResult, setQuizResult] = useState<{ score: number; passed: boolean } | null>(null);
 
   const [activeCert, setActiveCert] = useState<{ cert: Certificate; badge: Badge } | null>(null);
 
@@ -103,15 +81,55 @@ export default function SkillDetail() {
   const progress = lessons.length > 0 ? Math.round((completedLessons.size / lessons.length) * 100) : 0;
   const alreadyCertified = hasCertificate(skill.id);
   const allDone = completedLessons.size === lessons.length;
+  const activeLesson = lessons.find((lesson) => lesson.id === activeLessonId) ?? lessons[0];
+  const nextRequiredLesson = lessons.find((lesson) => !completedLessons.has(lesson.id))?.id ?? lessons[0]?.id ?? 1;
 
-  const toggleLesson = (id: number) => {
+  const saveProgress = (nextCompleted: Set<number>, nextScores = quizScores) => {
+    if (!skillId) return;
+    writeLessonProgress(skillId, {
+      completedLessonIds: [...nextCompleted],
+      quizScores: nextScores,
+    });
+  };
+
+  const completeLesson = (id: number, score: number) => {
     setCompletedLessons((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      localStorage.setItem(`skill_progress_${skillId}`, JSON.stringify([...next]));
+      next.add(id);
+      const nextScores = { ...quizScores, [id]: Math.max(score, quizScores[id] ?? 0) };
+      setQuizScores(nextScores);
+      saveProgress(next, nextScores);
       return next;
     });
+  };
+
+  const openLesson = (id: number) => {
+    const previousComplete = id === 1 || completedLessons.has(id - 1);
+    if (!previousComplete && !completedLessons.has(id)) return;
+    setActiveLessonId(id);
+    setAnswers({});
+    setQuizResult(null);
+  };
+
+  const submitQuiz = () => {
+    if (!activeLesson) return;
+    const score = activeLesson.quiz.reduce((total, question) => {
+      return total + (answers[question.id] === question.answerIndex ? 1 : 0);
+    }, 0);
+    const passed = score >= PASSING_SCORE;
+    setQuizResult({ score, passed });
+
+    if (passed) {
+      completeLesson(activeLesson.id, score);
+      const nextLesson = lessons.find((lesson) => lesson.id > activeLesson.id && !completedLessons.has(lesson.id));
+      if (nextLesson) {
+        window.setTimeout(() => {
+          setActiveLessonId(nextLesson.id);
+          setAnswers({});
+          setQuizResult(null);
+        }, 700);
+      }
+    }
   };
 
   const handleComplete = () => {
@@ -220,9 +238,9 @@ export default function SkillDetail() {
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className="font-semibold text-slate-900">Course Lessons</h2>
+                <h2 className="font-semibold text-slate-900">Course Sessions</h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  {completedLessons.size} of {lessons.length} completed
+                  {completedLessons.size} of {lessons.length} completed. Pass each quiz with {PASSING_SCORE}/10 to continue.
                 </p>
               </div>
               {allDone && !alreadyCertified && (
@@ -257,21 +275,146 @@ export default function SkillDetail() {
             </div>
           </div>
 
+          {/* Active lesson */}
+          {activeLesson && (
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <div className="border-b border-slate-100 p-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs font-bold uppercase text-slate-400">Lesson {activeLesson.id}</p>
+                    <h2 className="mt-1 text-lg font-bold text-slate-900">{activeLesson.title}</h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{activeLesson.overview}</p>
+                  </div>
+                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold capitalize text-slate-600">
+                    {activeLesson.type === 'video' ? <Play size={12} /> : <FileText size={12} />}
+                    {activeLesson.type}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid gap-0 lg:grid-cols-[1fr_320px]">
+                <div className="p-5">
+                  <h3 className="text-sm font-bold text-slate-900">Step by step</h3>
+                  <ol className="mt-3 space-y-3">
+                    {activeLesson.steps.map((step, index) => (
+                      <li key={step} className="flex gap-3 text-sm leading-6 text-slate-600">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E3F6E8] text-xs font-bold text-[#1F5C2E]">
+                          {index + 1}
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <div className="mt-5 rounded-xl border border-[#BFCDBA] bg-[#F0FDF4] p-4">
+                    <p className="text-sm font-bold text-slate-900">Practical task</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-700">{activeLesson.practiceTask}</p>
+                  </div>
+
+                  <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-bold text-slate-900">Extra tutorial source</p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {activeLesson.resource.source} / {activeLesson.resource.title}
+                        </p>
+                      </div>
+                      <a
+                        href={activeLesson.resource.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="app-secondary-btn px-3 py-2 text-xs"
+                      >
+                        Open <ExternalLink size={13} />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-100 p-5 lg:border-l lg:border-t-0">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">Quiz</h3>
+                      <p className="text-xs text-slate-500">Answer all 10 questions.</p>
+                    </div>
+                    {quizScores[activeLesson.id] && (
+                      <span className="rounded-full bg-[#ECFDF5] px-2.5 py-1 text-xs font-bold text-[#065F46]">
+                        Best {quizScores[activeLesson.id]}/10
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="max-h-[520px] space-y-4 overflow-y-auto pr-1">
+                    {activeLesson.quiz.map((question) => (
+                      <fieldset key={question.id} className="rounded-xl border border-slate-200 p-3">
+                        <legend className="px-1 text-xs font-bold text-slate-800">
+                          {question.id}. {question.question}
+                        </legend>
+                        <div className="mt-2 space-y-1.5">
+                          {question.options.map((option, optionIndex) => (
+                            <label
+                              key={option}
+                              className="flex cursor-pointer items-start gap-2 rounded-lg px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-50"
+                            >
+                              <input
+                                type="radio"
+                                name={`lesson-${activeLesson.id}-question-${question.id}`}
+                                checked={answers[question.id] === optionIndex}
+                                onChange={() => setAnswers((prev) => ({ ...prev, [question.id]: optionIndex }))}
+                                className="mt-0.5"
+                              />
+                              <span>{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </fieldset>
+                    ))}
+                  </div>
+
+                  {quizResult && (
+                    <div
+                      className="mt-4 rounded-xl p-3 text-sm"
+                      style={{
+                        backgroundColor: quizResult.passed ? '#ECFDF5' : '#FEF2F2',
+                        color: quizResult.passed ? '#065F46' : '#991B1B',
+                      }}
+                    >
+                      {quizResult.passed
+                        ? `Passed with ${quizResult.score}/10. The next lesson is unlocked.`
+                        : `You scored ${quizResult.score}/10. Read the lesson again, do the task, then retake the quiz.`}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={submitQuiz}
+                    disabled={Object.keys(answers).length < activeLesson.quiz.length}
+                    className="app-primary-btn mt-4 w-full"
+                  >
+                    Submit Quiz
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Lesson list */}
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="divide-y divide-slate-50">
               {lessons.map((lesson) => {
                 const done = completedLessons.has(lesson.id);
+                const locked = lesson.id > 1 && !completedLessons.has(lesson.id - 1) && !done;
+                const active = lesson.id === activeLessonId;
                 return (
                   <div
                     key={lesson.id}
-                    className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/60 transition-colors cursor-pointer"
-                    onClick={() => toggleLesson(lesson.id)}
+                    className={`flex items-center gap-4 px-5 py-4 transition-colors ${locked ? 'cursor-not-allowed opacity-55' : 'cursor-pointer hover:bg-slate-50/60'} ${active ? 'bg-[#F0FDF4]' : ''}`}
+                    onClick={() => openLesson(lesson.id)}
                   >
                     <button
                       className="flex-shrink-0 transition-transform hover:scale-110"
-                      onClick={(e) => { e.stopPropagation(); toggleLesson(lesson.id); }}
-                      aria-label={done ? 'Mark incomplete' : 'Mark complete'}
+                      onClick={(e) => { e.stopPropagation(); openLesson(lesson.id); }}
+                      aria-label={done ? 'Completed' : locked ? 'Locked' : 'Open lesson'}
+                      disabled={locked}
                     >
                       {done ? (
                         <CheckCircle size={22} style={{ color: GREEN }} fill={GREEN} />
@@ -306,10 +449,12 @@ export default function SkillDetail() {
                       style={
                         done
                           ? { backgroundColor: '#ECFDF5', color: '#065F46' }
-                          : { backgroundColor: '#F1F5F9', color: '#64748B' }
+                          : locked
+                            ? { backgroundColor: '#F8FAFC', color: '#94A3B8' }
+                            : { backgroundColor: '#F1F5F9', color: '#64748B' }
                       }
                     >
-                      {done ? 'Done' : `${lesson.duration}`}
+                      {done ? 'Done' : locked ? 'Locked' : lesson.id === nextRequiredLesson ? 'Next' : `${lesson.duration}`}
                     </span>
                   </div>
                 );
@@ -349,12 +494,12 @@ export default function SkillDetail() {
             </div>
             <div className="p-4 space-y-2.5">
               <button
-                onClick={() => toggleLesson(1)}
+                onClick={() => openLesson(nextRequiredLesson)}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: NAVY }}
               >
                 <Zap size={15} />
-                Start First Lesson
+                {completedLessons.size > 0 ? 'Continue Next Lesson' : 'Start First Lesson'}
                 <ChevronRight size={14} className="ml-auto" />
               </button>
               {alreadyCertified && (

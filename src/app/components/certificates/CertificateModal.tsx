@@ -99,9 +99,13 @@ export default function CertificateModal({ certificate, badge, onClose }: Certif
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Award size={20} style={{ color: GOLD }} />
                 <p className="app-label" style={{ color: GOLD }}>
-                  Certificate of Completion
+                  Uganda Verified Certificate of Completion
                 </p>
                 <Award size={20} style={{ color: GOLD }} />
+              </div>
+
+              <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-2" style={{ borderColor: GOLD }}>
+                <img src="/logo.png" alt="Craft Hub logo" className="h-full w-full object-contain" />
               </div>
 
               <p className="text-sm text-slate-500 mb-2">This certifies that</p>
@@ -131,7 +135,10 @@ export default function CertificateModal({ certificate, badge, onClose }: Certif
               </div>
 
               <p className="text-xs mt-3 font-semibold" style={{ color: NAVY }}>
-                CraftHub Vocational Platform / Uganda
+                Verified by Craft Hub Uganda
+              </p>
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-normal text-slate-400">
+                Certificate ID: {certificate.id}
               </p>
             </div>
           </div>
@@ -145,7 +152,7 @@ export default function CertificateModal({ certificate, badge, onClose }: Certif
             <div className="flex-1">
               <p className="font-bold text-sm text-slate-900">{badgeStyle.label} Badge Earned!</p>
               <p className="text-xs text-slate-500 mt-0.5">
-                {certificate.skillName} / Level {badge.level.charAt(0).toUpperCase() + badge.level.slice(1)}
+                Verified badge in {certificate.skillName}
               </p>
             </div>
             <div className="flex items-center gap-1">
