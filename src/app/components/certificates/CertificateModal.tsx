@@ -105,7 +105,7 @@ export default function CertificateModal({ certificate, badge, onClose }: Certif
               </div>
 
               <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-2" style={{ borderColor: GOLD }}>
-                <img src="/logo.png" alt="Craft Hub logo" className="h-full w-full object-contain" />
+                <img src="/logo.jpeg" alt="Craft Hub logo" className="h-full w-full object-contain" />
               </div>
 
               <p className="text-sm text-slate-500 mb-2">This certifies that</p>

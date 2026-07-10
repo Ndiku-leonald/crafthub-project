@@ -10,15 +10,15 @@
   "background_color": "#F7F3EA",
   "icons": [
     {
-      "src": "/logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/logo.jpeg",
+      "sizes": "825x823",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "/logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/logo.jpeg",
+      "sizes": "825x823",
+      "type": "image/jpeg",
       "purpose": "maskable"
     },
     {
@@ -30,9 +30,9 @@
   ],
   "screenshots": [
     {
-      "src": "/logo.png",
-      "sizes": "540x720",
-      "type": "image/png"
+      "src": "/logo.jpeg",
+      "sizes": "825x823",
+      "type": "image/jpeg"
     }
   ],
   "categories": [

@@ -11,7 +11,7 @@ export function BrandMark({ dark = false }: { dark?: boolean }) {
       className="group flex items-center gap-3 rounded-full px-2 py-1 transition hover:bg-black/5"
     >
       <img
-        src="/logo.png"
+        src="/logo.jpeg"
         alt="CraftHub logo"
         className="h-10 w-10 rounded-full object-cover ring-1 ring-black/10"
       />
