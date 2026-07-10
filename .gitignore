@@ -7,9 +7,16 @@
 # Dependencies
 node_modules/
 
+# Production build output
+dist/
+build/
+.next/
+out/
+
 # Local tooling and OS files
 .DS_Store
 Thumbs.db
+.vercel/
 
 # Logs
 *.log
